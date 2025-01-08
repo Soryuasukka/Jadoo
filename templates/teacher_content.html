@@ -76,7 +76,8 @@
                 <div class="bg-primary me-sm-4 me-3 p-3" style="border-radius: 13px"> <img src="assets/img/steps/selection.svg" width="22" alt="steps" /></div>
                 <div class="flex-1">
                   <h5 class="text-secondary fw-bold fs-0">语言风格</h5>
-                  <p class="language_style">{{ }}</p>
+
+                  <p class="language_style">{{ language_style }}</p>
                 </div>
               </div>
               <div class="d-flex align-items-start mb-5">
@@ -98,7 +99,8 @@
                             <strong>音频文件:</strong> {{ style[5] }}<br>
                             <button class="btn btn-primary view-btn" data-id="{{ style[0] }}">查看</button>
                         </span>
-                        {% endfor %}
+                      {% endfor %}
+
                     </p>
                     <div class="buttons text-center">
                         <button id="prev" class="btn btn-outline-secondary">上一条</button>
@@ -118,6 +120,7 @@
                   <div>
                     <div class="flex-1">
                       <p class="file_name">{{ file_name }}</p>
+
                     </div>
                   </div>
                 </div>

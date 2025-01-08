@@ -213,8 +213,25 @@ def add_user_to_excel(username, password, role):
         return False
 
 #------------------------------------- Teacher 路由 -------------------------------------
-# Teacher:页面路由
+@app.route('/teacher_content', methods=['GET', 'POST'])
+def teacher_content():
+    all_styles = get_all_styles_from_excel()
+    language_style=getstyles(1)[0][1]
+    class_style = getstyles(1)[0][2]
+    audio_path = getstyles(1)[0][4]
+    file_name = getstyles(1)[0][5]
+    outline = getstyles(1)[0][6]
 
+    # 渲染模板，将最近三条记录传递到前端
+    return render_template(
+        'teacher_content.html',
+        language_style=language_style, class_style=class_style,
+        all_styles=all_styles, audio_path=audio_path, outline=outline, file_name=file_name,
+        error_message=None
+    )
+    return render_template('teacher_content.html', all_styles=all_styles, )
+
+# Teacher:页面路由
 @app.route('/teacher', methods=['GET', 'POST'])
 def teacher():
     if request.method == 'POST':
@@ -662,6 +679,27 @@ def register():
 def student_home():
     return render_template('student_home.html')
 
+def getstyles(n):
+    # 加载 Excel 文件并选择 "Styles" 工作表
+    workbook = load_workbook(EXCEL_FILE)
+    sheet = workbook.active
+
+    # 获取表格所有行数据（从第二行开始）
+    rows = list(sheet.iter_rows(min_row=2, values_only=True))
+
+    # 如果记录不足三行，则显示全部记录
+    if len(rows) == 0:
+        return render_template(
+            'teacher_home.html',
+            error_message="表格中没有任何记录。",
+            recent_records=None
+        )
+
+    # 获取倒数三行数据（如果不足三行则取全部）
+    recent_rows = rows[-n:]  # 倒数n行记录
+    return recent_rows
+
+
 # Home:教师预览路由
 @app.route('/teacher_home', methods=['POST', 'GET'])
 def teacher_home():
@@ -673,23 +711,6 @@ def teacher_home():
         )
 
     try:
-        # 加载 Excel 文件并选择 "Styles" 工作表
-        workbook = load_workbook(EXCEL_FILE)
-        sheet = workbook.active
-
-        # 获取表格所有行数据（从第二行开始）
-        rows = list(sheet.iter_rows(min_row=2, values_only=True))
-
-        # 如果记录不足三行，则显示全部记录
-        if len(rows) == 0:
-            return render_template(
-                'teacher_home.html',
-                error_message="表格中没有任何记录。",
-                recent_records=None
-            )
-
-        # 获取倒数三行数据（如果不足三行则取全部）
-        recent_rows = rows[-3:]  # 倒数三行记录
 
         # 提取需要的字段
         recent_records = [
@@ -698,7 +719,7 @@ def teacher_home():
                 "file_name": row[5],  # 假设 FileName 在第 6 列
                 "timestamp": row[3]  # 假设时间戳在第 4 列
             }
-            for row in recent_rows
+            for row in getstyles(3)
         ]
 
         # 渲染模板，将最近三条记录传递到前端
