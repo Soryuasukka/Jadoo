@@ -37,7 +37,7 @@
 </head>
 <body>
     <div class="container">
-        <form id="loginForm">
+        <form action="{{ url_for('login') }}" method="POST">
             <div class="form-group">
                 <label for="username">用户名</label>
                 <input type="text" class="form-control" id="username" name="username" required>
@@ -75,26 +75,5 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-       document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // 阻止表单默认提交
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
-    var userRole = document.getElementById('userRole').value;
-    var errorMessage = document.getElementById('errorMessage');
-
-    // 假设用户名和密码都是"admin"，角色根据下拉菜单选择
-    if (username === "hzh" && password === "123456") {
-        if (userRole === "student") {
-            window.location.href = "{{url_for('student_home') }}"; // 学生页面
-        } else if (userRole === "teacher") {
-            window.location.href = "{{url_for('teacher_home') }}";  // 教师页面
-        }
-    } else {
-        errorMessage.textContent = '用户名或密码错误';
-    }
-});
-
-    </script>
 </body>
 </html>
