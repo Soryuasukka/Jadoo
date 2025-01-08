@@ -485,10 +485,11 @@ def student():
         # 简单验证，去除可能的恶意脚本标签等（示例，可根据实际完善）
         audio_transcription = re.sub('<[^<]+?>', '', audio_transcription)
         # 根据转录文本生成学生笔记
+        audio_path = audio_file_path.replace('temp', 'assets/video')
         student_notes = generate_student_notes(audio_transcription)
         if isinstance(student_notes, tuple):
             points, note, summary = student_notes
-            return render_template('student.html', points=points, note=note, summary= summary,  audio_path=audio_file_path)
+            return render_template('student.html', points=points, note=note, summary= summary, audio_path=audio_file_path)
         else:
             return render_template('student.html', error_message="生成学生笔记的返回格式不符合预期", audio_path=audio_file_path)
     else:
