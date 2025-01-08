@@ -451,7 +451,7 @@ def generate_graph_student_notes(text):
 # Student:页面路由
 @app.route('/student', methods=['GET', 'POST'])
 def student():
-    excel_file_path = "student_notes.xlsx"  # 定义Excel文件路径
+    excel_file_path = os.path.join(os.getcwd(), "student_notes.xlsx")    # 定义Excel文件路径
     if request.method == 'POST':
         # 获取表单数据，并去除前后空格（优化获取后的数据处理）
         points = request.form.get('points', '').strip()

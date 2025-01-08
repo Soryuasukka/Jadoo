@@ -300,7 +300,7 @@
         const noteType = document.getElementById('note-type-select').value;
 
         // 使用fetch API发送POST请求到后端的/路由（和app.py中index路由对应，因为那里同时处理了POST请求）
-        fetch('/', {
+        fetch('/student', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
