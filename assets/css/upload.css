@@ -1,0 +1,20 @@
+
+
+#fileInfo {
+    padding-top: 20px; /* 设置了15像素的内边距顶部距离，可按需调整数值 */
+    padding-left: 25px; /* 设置了15像素的内边距顶部距离，可按需调整数值 */
+}
+
+#fileInfo p {
+    margin-bottom: 0;
+}
+
+#transcriptTextarea {
+    width: 90%; /* 设置宽度为父元素的 90% */
+    height: 300px; /* 设置固定高度，可根据实际情况调整数值 */
+    resize: none; /* 禁止用户手动调整文本框大小 */
+    overflow-y: scroll; /* 当文本内容超出高度时，显示垂直滚动条，实现上下滑动查看文字 */
+    border: 1px solid #ccc; /* 添加边框，颜色可根据设计风格调整 */
+    border-radius: 5px; /* 设置圆角，使文本框外观更圆润，可根据喜好调整半径值 */
+    padding: 10px; /* 设置内边距，让文本与边框有一定间距，可调整数值 */
+}

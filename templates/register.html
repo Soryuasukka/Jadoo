@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f0f0; /* 背景色 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* 视口高度 */
+            margin: 0; /* 去掉默认边距 */
+        }
+        .container {
+            background-color: white; /* 背景色 */
+            border-radius: 10px; /* 圆角 */
+            padding: 60px; /* 内边距 */
+            margin: 60px; /* 外边距 */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+            width: 90%; /* 宽度 */
+            max-width: 600px; /* 最大宽度 */
+        }
+        .form-group {
+            margin-bottom: 40px; /* 表单元素间距 */
+        }
+        .btn {
+            width: 100%; /* 按钮宽度 */
+        }
+        .error-message {
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="text-center">注册页面</h2>
+    <form id="registrationForm">
+        <div class="form-group">
+            <label for="username">用户名</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">确认密码</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+        </div>
+        <div class="form-group">
+            <label for="userRole">身份选择</label>
+            <select class="form-control" id="userRole" name="role" required>
+                <option value="">请选择身份</option>
+                <option value="student">学生</option>
+                <option value="teacher">教师</option>
+            </select>
+        </div>
+        <a href="{{ url_for('login') }}">注册</a>
+        <div id="errorMessage" class="error-message"></div>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('registrationForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // 阻止默认提交行为
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('confirmPassword').value;
+        var role = document.getElementById('userRole').value;
+        // 表单验证
+        if (!username || !password || !confirmPassword || !role) {
+            document.getElementById('errorMessage').textContent = '请填写所有字段';
+            return; // 清空错误信息后退出函数
+        } else if (password !== confirmPassword) {
+            document.getElementById('errorMessage').textContent = '密码和确认密码不一致';
+            return; // 清空错误信息后退出函数
+        } else {
+            document.getElementById('errorMessage').textContent = ''; // 清空错误信息
+        }
+        // 发送AJAX请求
+
+    });
+</script>
+</body>
+</html>
