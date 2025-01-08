@@ -39,27 +39,20 @@
     <!--    Main Content-->
     <!-- ===============================================-->
     <main class="main" id="top">
-      <nav class="navbar navbar-expand-lg navbar-light fixed-top py-5 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
-        <div class="container"><a class="navbar-brand" href="index.html"><img src="../assets/img/logo.svg" height="34" alt="logo" /></a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"> </span></button>
-          <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base align-items-lg-center align-items-start">
-              <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#service">Service</a></li>
-              <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#destination">Destination</a></li>
-              <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#booking">Booking</a></li>
-              <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#testimonial">Testimonial</a></li>
-              <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" aria-current="page" href="#!">Login</a></li>
-              <li class="nav-item px-3 px-xl-4"><a class="btn btn-outline-dark order-1 order-lg-0 fw-medium" href="#!">Sign Up</a></li>
-              <li class="nav-item dropdown px-3 px-lg-0"> <a class="d-inline-block ps-0 py-2 pe-3 text-decoration-none dropdown-toggle fw-medium" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">EN</a>
-                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" style="border-radius:0.3rem;" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="#!">EN</a></li>
-                  <li><a class="dropdown-item" href="#!">BN</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+      <<nav class="navbar navbar-expand-lg navbar-light fixed-top py-5 d-block">
+            <div class="container">
+                <a class="navbar-brand" href="student_home.html"><img src="assets/img/logo.svg" height="34" alt="logo" /></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base align-items-lg-center align-items-start">
+                        <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" href="{{ url_for('teacher_home') }}">首页</a></li>
+                        <a href="{{ url_for('upload_student') }}"><li class="nav-item px-3 px-xl-4">音频处理</li></a>
+                        <a href="{{ url_for('home') }}"><li class="nav-item px-3 px-xl-4">退出账户</li></a>
+                </div>
+            </div>
+        </nav>
       <section style="padding-top: 7rem;">
         <div class="bg-holder" style="background-image:url(../assets/img/hero/hero-bg.svg);">
         </div>
@@ -71,65 +64,98 @@
 
       <!-- ============================================-->
       <!-- <section> begin ============================-->
-      <section id="note-management">
-         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="mb-4 text-start">
-                        <h5 class="text-secondary">笔记操作</h5>
-                        <h3 class="fs-xl-10 fs-lg-8 fs-7 fw-bold font-cursive text-capitalize">管理你的学习笔记</h3>
-                    </div>
-                    <!-- 展示生成的笔记内容区域 -->
-                    <div class="row">
-                      <div class="col-sm-4">
-                        <textarea id="points-content" class="form-control" rows="10" placeholder="要点" style="background-color:#FDE2C2">{{points}}</textarea>
-                      </div>
-                      <div class="col-sm-8">
-                        <textarea id="note-content" class="form-control" rows="10" placeholder="笔记" style="background-color:#FFD9DF">{{note}}</textarea>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-12">
-                        <textarea id="summary-content" class="form-control" rows="5" placeholder="总结" style="background-color:#F0F6EF">{{summary}}</textarea>
-                      </div>
-                    </div>
-                    <br>
-                    <button id="add-annotation-btn" class="btn btn-secondary mb-3">添加批注</button>
-                    <button id="add-highlight-btn" class="btn btn-warning mb-3">添加高亮</button>
-                    <button id="remove-highlight-btn" class="btn btn-light mb-3">移除高亮</button>
-                    <!-- 学科下拉菜单 -->
-                    <div class="mb-3">
-                        <label for="subject-select" class="form-label">学科</label>
-                        <select class="form-select" id="subject-select">
-                            <option value="subject">{{subject}}</option>
-                        </select>
-                    </div>
-                    <!-- 笔记类型下拉菜单 -->
-                    <div class="mb-3">
-                        <label for="note-type-select" class="form-label">笔记类型</label>
-                        <select class="form-select" id="note-type-select">
-                            <option value="category">{{category}}</option>
-                        </select>
-                    </div>
-                    <button id="save-note-btn" class="btn btn-primary">保存笔记</button>
+<section id="note-management">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="mb-4 text-start">
+                    <h5 class="text-secondary">笔记操作</h5>
+                    <h3 class="fs-xl-10 fs-lg-8 fs-7 fw-bold font-cursive text-capitalize">
+                        匹配到的笔记
+                    </h3>
                 </div>
-                <div class="col-lg-6 d-flex justify-content-center align-items-start">
-                    <div class="card position-relative shadow" style="max-width: 370px;">
-                        <div class="position-absolute z-index--1 me-10 me-xxl-0" style="right:-160px;top:-210px;"> <img src="../assets/img/steps/heart.svg" style="max-width:550px;" alt="音频示意图片" /></div>
-                        <div class="card-body p-3">
-                            <audio controls id="audio-player">
-                                    <source src="{{audio_path}}" type="audio/mpeg">
-                                    你的浏览器不支持音频播放
-                            </audio>
-                            <div class="mt-3">
-                                <p class="fw-medium">音频相关说明：这是与笔记相关的音频内容，可点击播放进行回顾等操作。</p>
-                            </div>
-                        </div>
+                <!-- 笔记显示区域 -->
+                <div class="row">
+                    <div class="col-sm-4">
+                        <textarea id="points-content" class="form-control" rows="10" style="background-color:#FDE2C2"></textarea>
+                    </div>
+                    <div class="col-sm-8">
+                        <textarea id="note-content" class="form-control" rows="10" style="background-color:#FFD9DF"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <textarea id="summary-content" class="form-control" rows="5" style="background-color:#F0F6EF"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p><strong>学科：</strong><span id="subject-content"></span></p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p><strong>笔记类型：</strong><span id="category-content"></span></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <audio controls id="audio-player">
+                            <source id="audio-source" src="" type="audio/mpeg">
+                            你的浏览器不支持音频播放
+                        </audio>
+                    </div>
+                </div>
+                <!-- 上一条和下一条按钮 -->
+                <div class="row mt-3">
+                    <div class="col-sm-6">
+                        <button id="prev-btn" class="btn btn-secondary">上一条</button>
+                    </div>
+                    <div class="col-sm-6 text-end">
+                        <button id="next-btn" class="btn btn-secondary">下一条</button>
                     </div>
                 </div>
             </div>
         </div>
-      </section>
+    </div>
+
+    <!-- 将 matched_notes 传递到 JavaScript -->
+    <script>
+        const matchedNotes = {{ matched_notes|tojson }};
+        let currentIndex = 0;
+
+        // 更新显示内容
+        function updateNoteDisplay() {
+            if (matchedNotes.length > 0) {
+                const note = matchedNotes[currentIndex];
+                document.getElementById('points-content').value = note.points || '';
+                document.getElementById('note-content').value = note.note || '';
+                document.getElementById('summary-content').value = note.summary || '';
+                document.getElementById('subject-content').textContent = note.subject || '';
+                document.getElementById('category-content').textContent = note.category || '';
+                document.getElementById('audio-source').src = note.audio_path || '';
+                document.getElementById('audio-player').load(); // 重新加载音频
+            }
+        }
+
+        // 上一条
+        document.getElementById('prev-btn').addEventListener('click', function () {
+            if (matchedNotes.length > 0) {
+                currentIndex = (currentIndex - 1 + matchedNotes.length) % matchedNotes.length;
+                updateNoteDisplay();
+            }
+        });
+
+        // 下一条
+        document.getElementById('next-btn').addEventListener('click', function () {
+            if (matchedNotes.length > 0) {
+                currentIndex = (currentIndex + 1) % matchedNotes.length;
+                updateNoteDisplay();
+            }
+        });
+
+        // 初始化显示第一条
+        updateNoteDisplay();
+    </script>
+</section>
 
       <!-- <section> close ============================-->
       <!-- ============================================-->
@@ -236,6 +262,8 @@
                     alert('保存笔记出现错误，请稍后重试');
                 });
         });
+
+
     </script>
 
 

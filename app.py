@@ -468,14 +468,14 @@ def student():
         if not os.path.exists(excel_file_path):
             wb = Workbook()
             ws = wb.active
-            ws.append(["要点", "笔记", "总结", "学科", "笔记类型"])
+            ws.append(["要点", "笔记", "总结", "学科", "笔记类型","路径"])
         else:
             # 使用load_workbook函数加载已有文件，而非通过Workbook实例调用
             wb = load_workbook(excel_file_path)
             ws = wb.active
 
         # 将数据添加到Excel表格中
-        ws.append([points, note, summary, subject, note_type])
+        ws.append([points, note, summary, subject, note_type,audio_file_path])
 
         try:
             # 保存Excel文件
@@ -504,30 +504,44 @@ def student():
 @app.route('/show_matched_content')
 def show_matched_content():
     # 从查询参数中获取匹配要点内容，如果没有传入则默认为空字符串
-    target_points = "书法"
+    target_points = "语文"
     excel_file_path = "student_notes.xlsx"
     matched_notes = []
+
     if not os.path.exists(excel_file_path):
-        return render_template('content.html', error_message="Excel文件不存在，无法进行匹配操作", points="", note="", summary="")
+        return render_template(
+            'content.html',
+            error_message="Excel文件不存在，无法进行匹配操作",
+            matched_notes=[]
+        )
+
     try:
         wb = openpyxl.load_workbook(excel_file_path)
         ws = wb.active
+
         # 遍历表格中的每一行（跳过表头行，从第二行开始），检查要点列是否包含要匹配的要点内容
         for row in ws.iter_rows(min_row=2, values_only=True):
-            if target_points in str(row[0]):
-                matched_notes.append(row)
-        if matched_notes:
-            # 假设只取第一个匹配到的笔记内容进行展示（可根据需求修改为其他逻辑，如展示全部匹配结果）
-            points = matched_notes[0][0]
-            note = matched_notes[0][1]
-            summary = matched_notes[0][2]
-            subject = matched_notes[0][3]
-            category = matched_notes[0][4]
-            return render_template('content.html', points=points, note=note, summary=summary,subject=subject,category=category)
-        else:
-            return render_template('content.html', points="未找到匹配的笔记内容", note="", summary="")
+            if target_points in str(row[3]):
+                matched_notes.append({
+                    "points": row[0],
+                    "note": row[1],
+                    "summary": row[2],
+                    "subject": row[3],
+                    "category": row[4],
+                    "audio_path": "assets/video/example.mp3"  # 替换为实际音频路径逻辑
+                })
+
+        return render_template(
+            'content.html',
+            matched_notes=matched_notes  # 将匹配的笔记传递到模板
+        )
+
     except Exception as e:
-        return render_template('content.html', error_message=f"匹配笔记过程中出现错误: {str(e)}", points="", note="", summary="")
+        return render_template(
+            'content.html',
+            error_message=f"匹配笔记过程中出现错误: {str(e)}",
+            matched_notes=[]
+        )
 
 @app.route('/graph')
 def graph():
