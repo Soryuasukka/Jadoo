@@ -39,6 +39,7 @@
                 <li class="nav-item px-3 px-xl-4"><a class="nav-link fw-medium" href="#home">首页</a></li>
                 <a href="{{ url_for('upload_student') }}"><li class="nav-item px-3 px-xl-4">音频处理</li></a>
                 <a href="{{ url_for('home') }}"><li class="nav-item px-3 px-xl-4">退出账户</li></a>
+            </ul>
         </div>
     </div>
 </nav>
@@ -54,35 +55,42 @@
               <div class="d-flex align-items-start mb-5">
                 <div class="bg-primary me-sm-4 me-3 p-3" style="border-radius: 13px"> <img src="assets/img/steps/selection.svg" width="22" alt="steps" /></div>
                 <div class="flex-1">
-                  <h5 class="text-secondary fw-bold fs-0">英语</h5>
-                  <p> 2024.12.28 <br class="d-none d-sm-block">复习笔记</p>
+
+
+                  <div class="mb-3">
+    <!-- 第一个输入框 -->
+                    <input type="text" name="target_points" id="input1" class="form-control" placeholder="输入学科来查找" />
+                    <button class="btn btn-primary" onclick="submitForm('input1')">提交</button>
+                </div>
+
                 </div>
                 <!-- 添加详情按钮 -->
-                <div class="d-flex justify-content-end">
-                    <a href="{{ url_for('show_matched_content') }}" class="btn btn-primary">详情</a>
-                </div>
+
               </div>
               <div class="d-flex align-items-start mb-5">
                 <div class="bg-danger me-sm-4 me-3 p-3" style="border-radius: 13px"> <img src="assets/img/steps/water-sport.svg" width="22" alt="steps" /></div>
                 <div class="flex-1">
-                  <h5 class="text-secondary fw-bold fs-0">数学</h5>
-                  <p> 2024.12.28 <br class="d-none d-sm-block">复习笔记</p>
+
+                    <div class="mb-3">
+    <!-- 第二个输入框 -->
+                        <input type="text" name="target_points" id="input2" class="form-control" placeholder="输入笔记类型来查找" />
+                        <button class="btn btn-primary" onclick="submitForm('input2')">提交</button>
+                    </div>
+
                 </div>
                 <!-- 添加详情按钮 -->
-                <div class="d-flex justify-content-end">
-                    <a href="{{ url_for('show_matched_content') }}" class="btn btn-primary">详情</a>
-                </div>
               </div>
               <div class="d-flex align-items-start mb-5">
                 <div class="bg-info me-sm-4 me-3 p-3" style="border-radius: 13px"> <img src="assets/img/steps/taxi.svg" width="22" alt="steps" /></div>
                 <div class="flex-1">
-                  <h5 class="text-secondary fw-bold fs-0">语文</h5>
-                  <p> 2024.12.28<br class="d-none d-sm-block">复习笔记</p>
+                  <div class="mb-3">
+    <!-- 第三个输入框 -->
+                    <input type="text" name="target_points" id="input3" class="form-control" placeholder="输入文件名来查找" />
+                    <button class="btn btn-primary" onclick="submitForm('input3')">提交</button>
+                </div>
+
                 </div>
                 <!-- 添加详情按钮 -->
-                <div class="d-flex justify-content-end">
-                    <a href="{{ url_for('show_matched_content') }}" class="btn btn-primary">详情</a>
-                </div>
               </div>
             </div>
             <div class="col-lg-6 d-flex justify-content-center align-items-start">
@@ -198,6 +206,36 @@
             });
         });
     });
+
+
+    function submitForm(inputId) {
+        // 获取选定的输入框内容
+        const targetPoints = document.getElementById(inputId).value;
+
+        if (!targetPoints) {
+            alert('请输入学科内容');
+            return;
+        }
+
+        // 创建一个表单
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/show_matched_content';
+
+        // 创建一个隐藏的输入字段，并赋值为选中的输入框内容
+        const inputField = document.createElement('input');
+        inputField.type = 'hidden';
+        inputField.name = 'target_points';
+        inputField.value = targetPoints;
+
+        form.appendChild(inputField);
+
+        // 提交表单
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Volkhov:wght@700&display=swap" rel="stylesheet">
 </body>

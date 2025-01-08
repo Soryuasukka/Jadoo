@@ -501,10 +501,15 @@ def student():
         return render_template('student.html', error_message="未能成功获取音频转录文本", audio_path=audio_file_path)
 
 
-@app.route('/show_matched_content')
+@app.route('/show_matched_content', methods=['POST'])
 def show_matched_content():
-    # 从查询参数中获取匹配要点内容，如果没有传入则默认为空字符串
-    target_points = "语文"
+    # 从前端表单获取要匹配的内容
+    target_points = request.form.get('target_points', '')  # 接收表单中的 target_points
+
+    # 如果没有输入值，返回错误信息
+    if not target_points:
+        return render_template('input_form.html', error_message="请输入要匹配的要点！")
+
     excel_file_path = "student_notes.xlsx"
     matched_notes = []
 
@@ -519,29 +524,53 @@ def show_matched_content():
         wb = openpyxl.load_workbook(excel_file_path)
         ws = wb.active
 
-        # 遍历表格中的每一行（跳过表头行，从第二行开始），检查要点列是否包含要匹配的要点内容
+        # 遍历表格中的每一行（跳过表头行，从第二行开始），根据 target_points 的长度匹配不同的列
         for row in ws.iter_rows(min_row=2, values_only=True):
-            if target_points in str(row[3]):
-                matched_notes.append({
-                    "points": row[0],
-                    "note": row[1],
-                    "summary": row[2],
-                    "subject": row[3],
-                    "category": row[4],
-                    "audio_path": row[5] # 替换为实际音频路径逻辑
-                })
+            if len(target_points) == 2:  # target_points 是两个字时
+                if target_points in str(row[3]):  # 匹配 row[4]
+                    matched_notes.append({
+                        "points": row[0],
+                        "note": row[1],
+                        "summary": row[2],
+                        "subject": row[3],
+                        "category": row[4],
+                        "audio_path": row[5]  # 替换为实际音频路径逻辑
+                    })
+            elif len(target_points) == 4:  # target_points 是四个字时
+                if target_points in str(row[4]):  # 匹配 row[5]
+                    matched_notes.append({
+                        "points": row[0],
+                        "note": row[1],
+                        "summary": row[2],
+                        "subject": row[3],
+                        "category": row[4],
+                        "audio_path": row[5]  # 替换为实际音频路径逻辑
+                    })
+            else:  # 其他情况，匹配 row[6]
+                if target_points in str(row[5]):  # 匹配 row[6]
+                    matched_notes.append({
+                        "points": row[0],
+                        "note": row[1],
+                        "summary": row[2],
+                        "subject": row[3],
+                        "category": row[4],
+                        "audio_path": row[5]  # 替换为实际音频路径逻辑
+                    })
 
+        # 渲染匹配结果页面
         return render_template(
-            'content.html',
-            matched_notes=matched_notes  # 将匹配的笔记传递到模板
+            'content.html',  # 跳转到展示匹配结果的页面
+            matched_notes=matched_notes
         )
 
     except Exception as e:
+        # 如果匹配过程中出现错误，返回错误信息
         return render_template(
             'content.html',
             error_message=f"匹配笔记过程中出现错误: {str(e)}",
             matched_notes=[]
         )
+
 
 @app.route('/graph')
 def graph():
