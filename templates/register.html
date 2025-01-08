@@ -58,7 +58,7 @@
                 <option value="teacher">教师</option>
             </select>
         </div>
-        <a href="{{ url_for('login') }}">注册</a>
+        <button type="submit" class="btn btn-primary">注册</button>
         <div id="errorMessage" class="error-message"></div>
     </form>
 </div>
@@ -82,7 +82,18 @@
             document.getElementById('errorMessage').textContent = ''; // 清空错误信息
         }
         // 发送AJAX请求
-
+        $.ajax({
+            type: 'POST',
+            url: '/register', // 注意这里的URL需要与Flask路由匹配
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8', // 设置内容类型为表单编码类型
+            data: {username: username, password: password, confirmPassword: confirmPassword, role: role}, // 传递数据给服务器端处理程序
+            success: function (response) { // 请求成功时的回调函数
+                window.location.href = "{{ url_for('login') }}"; // 跳转到登录页面
+            },
+            error: function () { // 请求失败时的回调函数
+                document.getElementById('errorMessage').textContent = '注册失败，请稍后再试'; // 显示错误信息
+            }
+        });
     });
 </script>
 </body>

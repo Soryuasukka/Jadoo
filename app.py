@@ -12,6 +12,7 @@ import openpyxl
 from flask_sqlalchemy import SQLAlchemy
 from volcenginesdkarkruntime import Ark
 
+
 # 配置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__,
             static_folder='assets',
             static_url_path='/assets')
+app.secret_key = 'your_secret_key'
 
 path1 = None
 audio_file_path=None
@@ -33,7 +35,7 @@ def custom_static(filename):
 EXCEL_FILE = "styles.xlsx"
 
 # 使用绝对路径
-USERS_FILE = "users.xlsx"
+USERS_FILE = r"D:\pyprojects\public\users.xlsx"
 
 
 # 检查文件是否存在，如果不存在则创建文件并添加初始用户
@@ -196,14 +198,18 @@ def get_user_role(username):
 # Home:注册后添加信息
 def add_user_to_excel(username, password, role):
     try:
-        df = pd.read_excel(USERS_FILE)
+        print(f"Adding user: {username}, {role}")
+        df = pd.read_excel(USERS_FILE)  # 尝试读取文件
+        print(f"Current DataFrame: \n{df}")
         new_user = pd.DataFrame({'username': [username], 'password': [password], 'role': [role]})
         df = pd.concat([df, new_user], ignore_index=True)
-        df.to_excel(USERS_FILE, index=False)
+        df.to_excel(USERS_FILE, index=False)  # 尝试写入文件
+        print(f"Updated DataFrame: \n{df}")
         logger.info(f"用户 {username} 已成功添加到Excel文件中。")
         return True
     except Exception as e:
         logger.error(f"无法将用户 {username} 添加到Excel文件中：{e}")
+        print(f"Error: {e}")
         return False
 
 #------------------------------------- Teacher 路由 -------------------------------------
@@ -225,7 +231,6 @@ def teacher():
     all_styles = get_all_styles_from_excel()  # 获取所有历史记录
     return render_template('teacher.html', language_style=language_style, class_style=class_style,
                             all_styles=all_styles, audio_path=audio_path, outline=outline,file_name=file_name)
-
 
 '''@app.route('/teacher', methods=['GET', 'POST'])
 def teacher():
@@ -489,7 +494,7 @@ def student():
         student_notes = generate_student_notes(audio_transcription)
         if isinstance(student_notes, tuple):
             points, note, summary = student_notes
-            return render_template('student.html', points=points, note=note, summary= summary, audio_path=audio_file_path)
+            return render_template('student.html', points=points, note=note, summary= summary, audio_path=audio_path)
         else:
             return render_template('student.html', error_message="生成学生笔记的返回格式不符合预期", audio_path=audio_file_path)
     else:
@@ -586,23 +591,25 @@ def register():
         password = request.form.get('password')
         confirmPassword = request.form.get('confirmPassword')
         role = request.form.get('role')
+        print(username)
 
+        # 密码不一致
         if password != confirmPassword:
-            flash('密码和确认密码不一致')
+            flash('密码和确认密码不一致', 'error')
             return render_template('register.html')
 
-        # 检查用户是否已存在
+        # 用户名已存在
         if user_exists(username):
-            flash('用户名已存在')
+            flash('用户名已存在', 'error')
             return render_template('register.html')
 
-        # 将新用户添加到Excel文件中
-        hashed_password = generate_password_hash(password)  # 生成密码哈希
+        # 生成哈希密码并添加用户
+        hashed_password = generate_password_hash(password)
         if add_user_to_excel(username, hashed_password, role):
-            flash('注册成功，请登录')
+            flash('注册成功，请登录', 'success')
             return redirect(url_for('login'))
         else:
-            flash('注册失败，请稍后再试')
+            flash('注册失败，请稍后再试', 'error')
             return render_template('register.html')
 
     return render_template('register.html')
@@ -625,3 +632,4 @@ def audio():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
