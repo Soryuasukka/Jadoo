@@ -3,7 +3,7 @@ import pandas as pd
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from openpyxl import Workbook, load_workbook
-import generate,translation
+
 import generate_student_notes
 import requests
 import logging
@@ -23,6 +23,7 @@ app = Flask(__name__,
             static_folder='assets',
             static_url_path='/assets')
 
+path1 = None
 audio_file_path=None
 text_to_pass=""
 # 自定义静态文件路由
@@ -103,6 +104,7 @@ def get_all_styles_from_excel():
     return rows
 
 #------------------------------------- Upload 界面函数 -------------------------------------
+
 # Upload:音频转文本函数
 @app.route('/transcribe_audio', methods=['POST'])
 def get_audio_transcription():
@@ -119,7 +121,6 @@ def get_audio_transcription():
         audio_file_path = os.path.join('temp', audio_file.filename)
         audio_file.save(audio_file_path)
         print(audio_file_path)
-
         # 构建要发送的文件数据和其他表单数据
         files = {
             'file': (audio_file_path, open(audio_file_path, 'rb')),
@@ -209,7 +210,7 @@ def add_user_to_excel(username, password, role):
 
 #------------------------------------- Teacher 路由 -------------------------------------
 # Teacher:页面路由
-'''
+
 @app.route('/teacher', methods=['GET', 'POST'])
 def teacher():
     if request.method == 'POST':
@@ -218,26 +219,94 @@ def teacher():
         pass
 
     # 从 generate 模块中获取两个值
-    language_style, class_style = generate.trans()  # 修改 generate 返回两个值
-    audio_path = audio_file_path
-    outline = generate.out()
-    filename="test"
-    insert_style_to_excel(language_style, class_style, audio_path,filename, outline)
+    language_style, class_style = trans()  # 修改 generate 返回两个值
+    audio_path = audio_file_path.replace('temp', 'assets/video')
+    outline = out()
+    file_name = os.path.basename(audio_file_path)
+    insert_style_to_excel(language_style, class_style, audio_path,file_name, outline)
     all_styles = get_all_styles_from_excel()  # 获取所有历史记录
     return render_template('teacher.html', language_style=language_style, class_style=class_style,
-                            all_styles=all_styles, audio_path=audio_path, outline=outline)
-'''
+                            all_styles=all_styles, audio_path=audio_path, outline=outline,file_name=file_name)
 
-@app.route('/teacher', methods=['GET', 'POST'])
+
+'''@app.route('/teacher', methods=['GET', 'POST'])
 def teacher():
     if request.method == 'POST':
         # 处理表单提交的数据
         # 例如，获取上传的文件或其他表单数据
         pass
-    audio_path = "temp/test.mp3"
+    print("nowhere")
+    print(text_to_pass)
+    audio_path = audio_file_path
     all_styles = get_all_styles_from_excel()
-    return render_template('teacher.html',all_styles=all_styles,text_test=text_to_pass,audio_path=audio_path)
+    return render_template('teacher.html',all_styles=all_styles,text_test=text_to_pass,audio_path=audio_path)'''
 
+def generate():
+    # 获取 text_to_pass 的值
+    textget = text_to_pass
+    if textget is None:
+        textget = ''  # 或者其他默认值
+
+    # 设置 Ark 客户端
+    client = Ark(api_key=os.environ.get("ARK_API_KEY"))
+    client = Ark(
+        base_url="https://ark.cn-beijing.volces.com/api/v3",
+    )
+    input = '请你分析一下这段上课的音频，总结教师的教学风格和语言风格。' + textget +'请严格按照以下格式输出：整体语言风格（10个字及以下）： 。课堂风格分析及建议（200字及以下 ）： 。'
+    completion = client.chat.completions.create(
+        model="ep-20241207202047-vv45w",
+        messages=[
+            {"role": "system", "content": "你是一个专业的教授，现在需要来评判不同教师上课的教学风格。"},
+            {"role": "user", "content": input},
+        ],
+    )
+    return completion.choices[0].message.content
+
+def outline():
+    # 设置 Ark 客户端
+    textget = text_to_pass
+    client = Ark(api_key=os.environ.get("ARK_API_KEY"))
+    client = Ark(
+        base_url="https://ark.cn-beijing.volces.com/api/v3",
+    )
+    input = '请你分析一下这段上课的音频文本，总结教师的课程大纲' + textget +'请严格按照以下格式输出，字数在200字左右，不要有序号：课程大纲： 。'
+    completion = client.chat.completions.create(
+        model="ep-20241207202047-vv45w",
+        messages=[
+            {"role": "system", "content": "你是一个专业的教授，现在需要来记录不同老师的课程大纲。"},
+            {"role": "user", "content": input},
+        ],
+    )
+    return completion.choices[0].message.content
+
+def parse_generated_content(content):
+    pattern = r"整体语言风格：\s*(.*?)。\s*课堂风格分析及建议：\s*(.*)"
+    match = re.search(pattern, content)
+    if match:
+        language_style = match.group(1)
+        class_style = match.group(2)
+        print(language_style)
+        return language_style, class_style
+    else:
+        return None, None
+
+def parse_generated_outline(content):
+    pattern = r"课程大纲：\s*(.*)"
+    match = re.search(pattern, content)
+    if match:
+        dagang = match.group(1)
+        print(dagang)
+        return dagang
+    else:
+        return None, None
+
+def trans():
+    language_style, class_style = parse_generated_content(generate())
+    return language_style,class_style
+
+def out():
+    outlinefinal = parse_generated_outline(outline())
+    return outlinefinal
 #------------------------------------- Student 路由 -------------------------------------
 # Student:页面路由
 @app.route('/student', methods=['GET', 'POST'])
