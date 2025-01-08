@@ -473,9 +473,9 @@ def student():
             # 使用load_workbook函数加载已有文件，而非通过Workbook实例调用
             wb = load_workbook(excel_file_path)
             ws = wb.active
-
+        audio_path = audio_file_path.replace('temp', 'assets/video')
         # 将数据添加到Excel表格中
-        ws.append([points, note, summary, subject, note_type,audio_file_path])
+        ws.append([points, note, summary, subject, note_type, audio_path])
 
         try:
             # 保存Excel文件
@@ -528,7 +528,7 @@ def show_matched_content():
                     "summary": row[2],
                     "subject": row[3],
                     "category": row[4],
-                    "audio_path": "assets/video/example.mp3"  # 替换为实际音频路径逻辑
+                    "audio_path": row[5] # 替换为实际音频路径逻辑
                 })
 
         return render_template(
