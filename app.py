@@ -663,9 +663,58 @@ def student_home():
     return render_template('student_home.html')
 
 # Home:教师预览路由
-@app.route('/teacher_home')
+@app.route('/teacher_home', methods=['POST', 'GET'])
 def teacher_home():
-    return render_template('teacher_home.html')
+    if not os.path.exists(EXCEL_FILE):
+        return render_template(
+            'teacher_home.html',
+            error_message="Excel文件不存在，无法加载记录。",
+            recent_records=None
+        )
+
+    try:
+        # 加载 Excel 文件并选择 "Styles" 工作表
+        workbook = load_workbook(EXCEL_FILE)
+        sheet = workbook.active
+
+        # 获取表格所有行数据（从第二行开始）
+        rows = list(sheet.iter_rows(min_row=2, values_only=True))
+
+        # 如果记录不足三行，则显示全部记录
+        if len(rows) == 0:
+            return render_template(
+                'teacher_home.html',
+                error_message="表格中没有任何记录。",
+                recent_records=None
+            )
+
+        # 获取倒数三行数据（如果不足三行则取全部）
+        recent_rows = rows[-3:]  # 倒数三行记录
+
+        # 提取需要的字段
+        recent_records = [
+            {
+                "language_style": row[1],  # 假设 LanguageStyle 在第 2 列
+                "file_name": row[5],  # 假设 FileName 在第 6 列
+                "timestamp": row[3]  # 假设时间戳在第 4 列
+            }
+            for row in recent_rows
+        ]
+
+        # 渲染模板，将最近三条记录传递到前端
+        return render_template(
+            'teacher_home.html',
+            recent_records=recent_records,
+            error_message=None
+        )
+
+    except Exception as e:
+        return render_template(
+            'teacher_home.html',
+            error_message=f"加载记录时出现错误：{str(e)}",
+            recent_records=None
+        )
+
 
 # Home:上传音频路由
 @app.route('/audio')

@@ -53,21 +53,21 @@
               </div>
               <div class="d-flex align-items-start mb-5">
                 <div class="bg-primary me-sm-4 me-3 p-3" style="border-radius: 13px"> <img src="assets/img/steps/selection.svg" width="22" alt="steps" /></div>
-                {% for record in records %}
-                <div class="d-flex align-items-start mb-5">
-                    <div class="bg-{{ loop.cycle('info', 'danger', 'primary') }} me-sm-4 me-3 p-3" style="border-radius: 13px">
-                        <img src="assets/img/steps/water-sport.svg" width="22" alt="steps" />
-                    </div>
-                    <div class="flex-1">
-                        <h5 class="text-secondary fw-bold fs-0">{{ record.language_style }}</h5>
-                        <p>{{ record.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}<br class="d-none d-sm-block">{{ record.file_name }}</p>
-                    </div>
-                    <!-- 添加详情按钮 -->
-                    <div class="d-flex justify-content-end">
-                        <a href="{{ url_for('teacher') }}" class="btn btn-primary">详情</a>
-                    </div>
-                </div>
-                {% endfor %}
+            {% if recent_records %}
+                <h5>最近记录:</h5>
+                <ul>
+                    {% for record in recent_records %}
+                        <li>
+                            <p>语言风格: {{ record.language_style }}</p>
+                            <p>文件名: {{ record.file_name }}</p>
+                            <p>时间: {{ record.timestamp }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>{{ error_message }}</p>
+            {% endif %}
+
 
               </div>
             </div>
